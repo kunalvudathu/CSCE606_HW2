@@ -13,3 +13,18 @@
  *= require_tree .
  *= require_self
  */
+
+table#movies th.hilite {
+  background-color: gold;
+}
+
+input#ratings_submit {
+  border-radius: 30px;
+  margin-left: 20px;
+}
+
+/*a {*/
+/*  color: red;*/
+/*  text-decoration: underline;*/
+/*  font-weight: bold;*/
+/*}*/

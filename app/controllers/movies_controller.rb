@@ -7,7 +7,42 @@ class MoviesController < ApplicationController
     end
   
     def index
-      @movies = Movie.all
+      redirect_page = false
+      if params[:sort_column]
+        # new sort column was set by user
+        # save in session
+          session[:sort_column] = params[:sort_column]
+      elsif session[:sort_column]
+        # previous session had user sort by movie title or release date
+          redirect_page = true
+          params[:sort_column] = session[:sort_column]
+      end
+  
+      @all_ratings = Movie.uniq.pluck(:rating)
+      if params[:ratings]
+        # new ratings selected by user
+        # save in session
+          session[:ratings] = params[:ratings]
+      elsif session[:ratings]
+         # previous session had user select filter by movie ratings
+          redirect_page = true
+          params[:ratings] = session[:ratings]
+      end
+  
+      if session[:ratings] != nil
+        # get rating selected from current or previous session
+          @ratings_selected = session[:ratings].keys
+      else
+        # if no rating filter, all ratings
+          @ratings_selected = @all_ratings
+      end
+  
+      if redirect_page
+          flash.keep
+          redirect_to movies_path(:sort_column => session[:sort_column], :ratings => session[:ratings])
+      end
+
+      @movies = Movie.with_ratings(@ratings_selected).order(params[:sort_column])
     end
   
     def new
